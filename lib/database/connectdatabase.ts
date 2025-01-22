@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = "mongodb+srv://mikenegh:FBCusc9trVMIhOKN@cluster0.n9cp0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const MONGODB_URI =
+  "mongodb+srv://mikenegh:FBCusc9trVMIhOKN@cluster0.n9cp0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
-let cached = (global as any).mongoose || { conn: null, promise: null };
+const cached = (global as any).mongoose || { conn: null, promise: null };
 
 export const dbConnect = async () => {
   if (cached.conn) return cached.conn;
