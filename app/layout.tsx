@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "NotifAi",
-  description: "Created for Introduction to AI Assignment",
+  description: "Created for Introduction to AI Assig",
 };
 
 export default function RootLayout({
