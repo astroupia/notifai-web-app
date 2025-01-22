@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
@@ -8,10 +6,10 @@ export default function Home() {
           <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
             Welcome to NotifAI
           </h1>
-          
+
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl">
-            Your intelligent educational platform that connects teachers and students
-            for a better learning experience.
+            Your intelligent educational platform that connects teachers and
+            students for a better learning experience.
           </p>
 
           <div className="flex gap-6 mt-8 flex-col sm:flex-row">

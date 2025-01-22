@@ -1,18 +1,24 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Calendar } from '@/components/ui/calendar'
-import { getAllAssignments } from '@/lib/database/actions/assignmentActions'
-import { getAllTests } from '@/lib/database/actions/testAction'
-import { Progress } from '@/components/ui/progress'
-import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer } from 'recharts'
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import { getAllAssignments } from "@/lib/database/actions/assignmentActions";
+import { getAllTests } from "@/lib/database/actions/testAction";
+import { Progress } from "@/components/ui/progress";
+import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 interface IAssignment {
-  _id: string
-  title: string
-  deadline: Date
-  totalMarks: number
+  _id: string;
+  title: string;
+  deadline: Date;
+  totalMarks: number;
 }
 
 interface ITest {
@@ -24,65 +30,78 @@ interface ITest {
 }
 
 interface IPerformanceData {
-  name: string
-  total: number
-  scored?: number  // Adding scored marks
+  name: string;
+  total: number;
+  scored?: number; // Adding scored marks
 }
 
 export default function StudentDashboard() {
-  const [assignments, setAssignments] = useState<IAssignment[]>([])
-  const [tests, setTests] = useState<ITest[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const [assignments, setAssignments] = useState<IAssignment[]>([]);
+  const [tests, setTests] = useState<ITest[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [assignmentsResult, testsResult] = await Promise.all([
           getAllAssignments(),
-          getAllTests()
-        ])
+          getAllTests(),
+        ]);
 
         if (assignmentsResult.success && assignmentsResult.data) {
-          setAssignments(assignmentsResult.data)
+          setAssignments(assignmentsResult.data);
         }
 
         if (testsResult.success && testsResult.data) {
-          setTests(testsResult.data)
+          setTests(testsResult.data);
         }
       } catch (err) {
-        setError('Failed to fetch dashboard data')
+        setError("Failed to fetch dashboard data");
+        console.log(err, error);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  });
 
   // Calculate test statistics
-  const totalTests = tests.length
-  const completedTests = tests.filter(t => new Date(t.date) < new Date()).length
-  const upcomingTests = tests.filter(t => new Date(t.date) >= new Date()).length
-  const averageScore = completedTests > 0
-    ? Math.round(tests.reduce((sum, t) => sum + (t.scoredMarks || 0), 0) / completedTests)
-    : 0
-
+  const totalTests = tests.length;
+  const completedTests = tests.filter(
+    (t) => new Date(t.date) < new Date()
+  ).length;
+  const upcomingTests = tests.filter(
+    (t) => new Date(t.date) >= new Date()
+  ).length;
+  const averageScore =
+    completedTests > 0
+      ? Math.round(
+          tests.reduce((sum, t) => sum + (t.scoredMarks || 0), 0) /
+            completedTests
+        )
+      : 0;
+  console.log(averageScore, upcomingTests, totalTests);
   // Calculate assignment statistics
-  const completedAssignments = assignments.filter(a => new Date(a.deadline) < new Date()).length
-  const upcomingAssignments = assignments.filter(a => new Date(a.deadline) >= new Date()).length
-  const totalAssignments = assignments.length
-
+  const completedAssignments = assignments.filter(
+    (a) => new Date(a.deadline) < new Date()
+  ).length;
+  const upcomingAssignments = assignments.filter(
+    (a) => new Date(a.deadline) >= new Date()
+  ).length;
+  const totalAssignments = assignments.length;
+  console.log(completedAssignments, upcomingAssignments, totalAssignments);
   // Enhanced performance data
   const performanceData: IPerformanceData[] = assignments
     .slice(0, 5)
-    .map(a => ({
+    .map((a) => ({
       name: a.title.length > 15 ? `${a.title.substring(0, 15)}...` : a.title,
       total: a.totalMarks,
-      scored: Math.floor(Math.random() * a.totalMarks) // Replace with actual scored marks
-    }))
+      scored: Math.floor(Math.random() * a.totalMarks), // Replace with actual scored marks
+    }));
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Student Dashboard</h1>
-      
+
       <div className="grid grid-cols-1 gap-6">
         {/* Academic Progress Card */}
         <Card className="shadow-md">
@@ -178,21 +197,21 @@ export default function StudentDashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Calendar 
+            <Calendar
               mode="single"
               className="rounded-md border"
               modifiers={{
-                assignment: assignments.map(a => new Date(a.deadline)),
-                test: tests.map(t => new Date(t.date))
+                assignment: assignments.map((a) => new Date(a.deadline)),
+                test: tests.map((t) => new Date(t.date)),
               }}
               modifiersStyles={{
-                assignment: { color: 'rgb(124, 58, 237)' },
-                test: { color: 'rgb(34, 197, 94)' }
+                assignment: { color: "rgb(124, 58, 237)" },
+                test: { color: "rgb(34, 197, 94)" },
               }}
             />
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }

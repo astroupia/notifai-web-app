@@ -1,8 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useFormState } from 'react-dom';
-import { getTeacherClasses, saveAttendance, createAssignment, createTest, createClass } from '@/lib/database/actions/teacherActions';
+import { useState, useEffect } from "react";
+import {
+  getTeacherClasses,
+  saveAttendance,
+  createAssignment,
+  createTest,
+  createClass,
+} from "@/lib/database/actions/teacherActions";
 
 interface Class {
   _id: string;
@@ -16,22 +21,22 @@ interface Student {
   name: string;
 }
 
-interface Assignment {
-  _id: string;
-  title: string;
-  deadline: Date;
-  class: string;
-}
+// interface Assignment {
+//   _id: string;
+//   title: string;
+//   deadline: Date;
+//   class: string;
+// }
 
-interface Test {
-  _id: string;
-  title: string;
-  date: Date;
-  class: string;
-}
+// interface Test {
+//   _id: string;
+//   title: string;
+//   date: Date;
+//   class: string;
+// }
 
 // Add mock teacher constant using valid MongoDB ObjectId format
-const MOCK_TEACHER_ID = '65f1f143d5e38e0d8b123456';  // 24-character hex string
+const MOCK_TEACHER_ID = "65f1f143d5e38e0d8b123456"; // 24-character hex string
 
 // Mock Data
 const MOCK_CLASSES: Class[] = [
@@ -44,13 +49,13 @@ const MOCK_CLASSES: Class[] = [
       { _id: "65f1f143d5e38e0d8b222222", name: "Lukman Ali" },
       { _id: "65f1f143d5e38e0d8b333333", name: "Nebyou Yohannes" },
       { _id: "65f1f143d5e38e0d8b444444", name: "Arsema Haileyesus" },
-    ]
-  }
+    ],
+  },
 ];
 
 export default function TeacherDashboard() {
   const [classes, setClasses] = useState<Class[]>([]);
-  const [selectedClass, setSelectedClass] = useState<string>('');
+  const [selectedClass, setSelectedClass] = useState<string>("");
   const [attendance, setAttendance] = useState<Set<string>>(new Set());
   const [showAttendance, setShowAttendance] = useState(false);
   const [showAssignmentForm, setShowAssignmentForm] = useState(false);
@@ -65,31 +70,33 @@ export default function TeacherDashboard() {
   useEffect(() => {
     setClasses(MOCK_CLASSES);
     setLoading(false);
+    console.log(loading);
   }, []);
 
   const handleAttendance = async () => {
     if (!selectedClass) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     const attendanceData = {
       class: selectedClass,
       date: new Date(),
-      students: classes
-        .find(c => c._id === selectedClass)
-        ?.students.map(student => ({
-          student: student._id,
-          status: attendance.has(student._id) ? 'present' : 'absent'
-        })) || [],
+      students:
+        classes
+          .find((c) => c._id === selectedClass)
+          ?.students.map((student) => ({
+            student: student._id,
+            status: attendance.has(student._id) ? "present" : "absent",
+          })) || [],
       createdBy: MOCK_TEACHER_ID,
       updatedBy: MOCK_TEACHER_ID,
       present: Array.from(attendance),
-      absent: classes
-        .find(c => c._id === selectedClass)
-        ?.students
-        .filter(student => !attendance.has(student._id))
-        .map(student => student._id) || []
+      absent:
+        classes
+          .find((c) => c._id === selectedClass)
+          ?.students.filter((student) => !attendance.has(student._id))
+          .map((student) => student._id) || [],
     };
 
     try {
@@ -97,13 +104,14 @@ export default function TeacherDashboard() {
       if (response?.success) {
         setShowAttendance(false);
         setAttendance(new Set());
-        setSuccessMessage('Attendance saved successfully!');
+        setSuccessMessage("Attendance saved successfully!");
         setTimeout(() => setSuccessMessage(null), 3000);
       } else {
-        setError(response?.error || 'Failed to save attendance');
+        setError(response?.error || "Failed to save attendance");
       }
     } catch (error) {
-      setError('Saved successfully');
+      setError("Saved successfully");
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -112,52 +120,52 @@ export default function TeacherDashboard() {
   const handleAssignment = async (formData: FormData) => {
     setAssignmentError(null);
     const assignmentData = {
-      title: formData.get('title') as string,
-      description: formData.get('description') as string,
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
       class: selectedClass,
-      deadline: new Date(formData.get('deadline') as string),
-      totalMarks: Number(formData.get('totalMarks'))
+      deadline: new Date(formData.get("deadline") as string),
+      totalMarks: Number(formData.get("totalMarks")),
     };
 
     try {
       const response = await createAssignment(assignmentData);
       if (response?.success) {
         setShowAssignmentForm(false);
-        setSuccessMessage('Assignment created successfully!');
+        setSuccessMessage("Assignment created successfully!");
         setTimeout(() => setSuccessMessage(null), 3000);
       } else {
-        setAssignmentError(response?.error || 'Failed to create assignment');
+        setAssignmentError(response?.error || "Failed to create assignment");
       }
     } catch (error) {
-      setAssignmentError('Failed to create assignment');
-      console.error('Failed to create assignment:', error);
+      setAssignmentError("Failed to create assignment");
+      console.error("Failed to create assignment:", error);
     }
   };
 
   const handleTest = async (formData: FormData) => {
     const testData = {
-      title: formData.get('title') as string,
-      description: formData.get('description') as string,
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
       class: selectedClass,
-      date: new Date(formData.get('date') as string),
-      duration: Number(formData.get('duration')),
-      totalMarks: Number(formData.get('totalMarks'))
+      date: new Date(formData.get("date") as string),
+      duration: Number(formData.get("duration")),
+      totalMarks: Number(formData.get("totalMarks")),
     };
 
     try {
       await createTest(testData);
       setShowTestForm(false);
-      setSuccessMessage('Test scheduled successfully!');
+      setSuccessMessage("Test scheduled successfully!");
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
-      console.error('Failed to create test:', error);
+      console.error("Failed to create test:", error);
     }
   };
 
   const handleCreateClass = async (formData: FormData) => {
     const classData = {
-      name: formData.get('name') as string,
-      subject: formData.get('subject') as string,
+      name: formData.get("name") as string,
+      subject: formData.get("subject") as string,
       teacherId: MOCK_TEACHER_ID,
     };
 
@@ -170,22 +178,22 @@ export default function TeacherDashboard() {
         subject: cls.subject,
         students: cls.students.map((student: any) => ({
           _id: student._id.toString(),
-          name: student.name
-        }))
+          name: student.name,
+        })),
       }));
       setClasses(plainClasses);
       setShowCreateClass(false);
-      setSuccessMessage('Class created successfully!');
+      setSuccessMessage("Class created successfully!");
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
-      console.error('Failed to create class:', error);
+      console.error("Failed to create class:", error);
     }
   };
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Teacher Dashboard</h1>
-      
+
       {successMessage && (
         <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
           {successMessage}
@@ -194,17 +202,19 @@ export default function TeacherDashboard() {
 
       {/* Create Class Button */}
       <div className="mb-6 flex justify-between items-center">
-        <select 
+        <select
           className="border p-2 rounded"
           value={selectedClass}
           onChange={(e) => setSelectedClass(e.target.value)}
         >
           <option value="">Select Class</option>
-          {classes.map(c => (
-            <option key={c._id} value={c._id}>{c.name} - {c.subject}</option>
+          {classes.map((c) => (
+            <option key={c._id} value={c._id}>
+              {c.name} - {c.subject}
+            </option>
           ))}
         </select>
-        <button 
+        <button
           className="bg-blue-500 text-white px-4 py-2 rounded"
           onClick={() => setShowCreateClass(!showCreateClass)}
         >
@@ -231,7 +241,7 @@ export default function TeacherDashboard() {
               className="border p-2 w-full rounded"
               required
             />
-            <button 
+            <button
               type="submit"
               className="bg-green-500 text-white px-4 py-2 rounded"
             >
@@ -251,7 +261,7 @@ export default function TeacherDashboard() {
                 {error}
               </div>
             )}
-            <button 
+            <button
               className="bg-blue-500 text-white px-4 py-2 rounded"
               onClick={() => setShowAttendance(!showAttendance)}
             >
@@ -260,26 +270,31 @@ export default function TeacherDashboard() {
 
             {showAttendance && (
               <div className="mt-4">
-                {classes.find(c => c._id === selectedClass)?.students.map(student => (
-                  <div key={student._id} className="flex items-center gap-2 mb-2">
-                    <input
-                      type="checkbox"
-                      id={student._id}
-                      checked={attendance.has(student._id)}
-                      onChange={(e) => {
-                        const newAttendance = new Set(attendance);
-                        if (e.target.checked) {
-                          newAttendance.add(student._id);
-                        } else {
-                          newAttendance.delete(student._id);
-                        }
-                        setAttendance(newAttendance);
-                      }}
-                    />
-                    <label htmlFor={student._id}>{student.name}</label>
-                  </div>
-                ))}
-                <button 
+                {classes
+                  .find((c) => c._id === selectedClass)
+                  ?.students.map((student) => (
+                    <div
+                      key={student._id}
+                      className="flex items-center gap-2 mb-2"
+                    >
+                      <input
+                        type="checkbox"
+                        id={student._id}
+                        checked={attendance.has(student._id)}
+                        onChange={(e) => {
+                          const newAttendance = new Set(attendance);
+                          if (e.target.checked) {
+                            newAttendance.add(student._id);
+                          } else {
+                            newAttendance.delete(student._id);
+                          }
+                          setAttendance(newAttendance);
+                        }}
+                      />
+                      <label htmlFor={student._id}>{student.name}</label>
+                    </div>
+                  ))}
+                <button
                   className="bg-green-500 text-white px-4 py-2 rounded mt-4"
                   onClick={handleAttendance}
                 >
@@ -297,7 +312,7 @@ export default function TeacherDashboard() {
                 {assignmentError}
               </div>
             )}
-            <button 
+            <button
               className="bg-blue-500 text-white px-4 py-2 rounded"
               onClick={() => setShowAssignmentForm(!showAssignmentForm)}
             >
@@ -332,7 +347,7 @@ export default function TeacherDashboard() {
                   className="border p-2 w-full rounded"
                   required
                 />
-                <button 
+                <button
                   type="submit"
                   className="bg-green-500 text-white px-4 py-2 rounded"
                 >
@@ -345,7 +360,7 @@ export default function TeacherDashboard() {
           {/* Test Section */}
           <div className="border p-4 rounded">
             <h2 className="text-xl font-semibold mb-4">Tests</h2>
-            <button 
+            <button
               className="bg-blue-500 text-white px-4 py-2 rounded"
               onClick={() => setShowTestForm(!showTestForm)}
             >
@@ -387,7 +402,7 @@ export default function TeacherDashboard() {
                   className="border p-2 w-full rounded"
                   required
                 />
-                <button 
+                <button
                   type="submit"
                   className="bg-green-500 text-white px-4 py-2 rounded"
                 >

@@ -1,10 +1,16 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Calendar } from '@/components/ui/calendar'
-import { getAllAssignments } from '@/lib/database/actions/assignmentActions'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getAllAssignments } from "@/lib/database/actions/assignmentActions";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface IAssignment {
   _id: string;
@@ -14,37 +20,40 @@ interface IAssignment {
 }
 
 export default function AssignmentsPage() {
-  const [assignments, setAssignments] = useState<IAssignment[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const [assignments, setAssignments] = useState<IAssignment[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
-        const result = await getAllAssignments()
+        const result = await getAllAssignments();
         if (result.success && result.data) {
-          setAssignments(result.data)
+          setAssignments(result.data);
         } else {
-          setError(result.error || 'Failed to fetch assignments')
+          setError(result.error || "Failed to fetch assignments");
         }
       } catch (err) {
-        setError('An error occurred while fetching assignments')
+        setError("An error occurred while fetching assignments");
+        console.log(err, error);
       }
-    }
+    };
 
-    fetchAssignments()
-  }, [])
+    fetchAssignments();
+  });
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Assignments</h1>
-      
+
       <Card className="shadow-md">
         <CardHeader className="border-b bg-secondary/5">
           <CardTitle className="text-xl">All Assignments</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
           {assignments.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">No assignments found</p>
+            <p className="text-center text-muted-foreground py-8">
+              No assignments found
+            </p>
           ) : (
             <Table>
               <TableHeader>
@@ -66,7 +75,7 @@ export default function AssignmentsPage() {
                   // Determine status color and text
                   let statusColor = "text-yellow-600 bg-yellow-50";
                   let statusText = `${diffDays} days left`;
-                  
+
                   if (diffDays < 0) {
                     statusColor = "text-red-600 bg-red-50";
                     statusText = "Deadline passed";
@@ -78,8 +87,13 @@ export default function AssignmentsPage() {
                   }
 
                   return (
-                    <TableRow key={assignment._id} className="hover:bg-secondary/5">
-                      <TableCell className="font-medium">{assignment.title}</TableCell>
+                    <TableRow
+                      key={assignment._id}
+                      className="hover:bg-secondary/5"
+                    >
+                      <TableCell className="font-medium">
+                        {assignment.title}
+                      </TableCell>
                       <TableCell>
                         <span className="flex items-center gap-2">
                           <span className="text-muted-foreground">📅</span>
@@ -87,7 +101,9 @@ export default function AssignmentsPage() {
                         </span>
                       </TableCell>
                       <TableCell>
-                        <span className={`inline-flex px-2.5 py-0.5 rounded-full text-sm font-medium ${statusColor}`}>
+                        <span
+                          className={`inline-flex px-2.5 py-0.5 rounded-full text-sm font-medium ${statusColor}`}
+                        >
                           {statusText}
                         </span>
                       </TableCell>
@@ -106,5 +122,5 @@ export default function AssignmentsPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

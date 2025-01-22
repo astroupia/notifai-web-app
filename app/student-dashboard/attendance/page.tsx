@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,28 +8,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { getAllAttendances } from '@/lib/database/actions/attendanceActions'
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { getAllAttendances } from "@/lib/database/actions/attendanceActions";
 
 interface AttendanceRecord {
-  _id: string
-  date: Date
-  class: string
+  _id: string;
+  date: Date;
+  class: string;
   students: Array<{
-    student: string
-    status: 'present' | 'absent' | 'late'
-    remarks?: string
-  }>
-  totalPresent: number
-  totalAbsent: number
-  totalLate: number
-  createdBy: string
-  updatedBy: string
-  createdAt: Date
-  updatedAt: Date
+    student: string;
+    status: "present" | "absent" | "late";
+    remarks?: string;
+  }>;
+  totalPresent: number;
+  totalAbsent: number;
+  totalLate: number;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const studentNameMap: { [key: string]: string } = {
@@ -40,52 +40,55 @@ const studentNameMap: { [key: string]: string } = {
 };
 
 export default function AttendancePage() {
-  const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([])
-  const [searchQuery, setSearchQuery] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [attendanceRecords, setAttendanceRecords] = useState<
+    AttendanceRecord[]
+  >([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
-        const result = await getAllAttendances()
+        const result = await getAllAttendances();
         if (result.success && result.data) {
-          setAttendanceRecords(result.data)
+          setAttendanceRecords(result.data);
         } else {
-          throw new Error(result.error || 'Failed to fetch attendance')
+          throw new Error(result.error || "Failed to fetch attendance");
         }
-        setLoading(false)
+        setLoading(false);
       } catch (err) {
-        setError('Failed to fetch attendance records')
-        setLoading(false)
+        setError("Failed to fetch attendance records");
+        setLoading(false);
+        console.log(err);
       }
-    }
+    };
 
-    fetchAttendance()
-  }, [])
+    fetchAttendance();
+  }, []);
 
-  const filteredRecords = attendanceRecords.filter(record => {
-    const searchTerm = searchQuery.toLowerCase()
+  const filteredRecords = attendanceRecords.filter((record) => {
+    const searchTerm = searchQuery.toLowerCase();
     return (
       record.class.toLowerCase().includes(searchTerm) ||
-      record.students.some(student => 
+      record.students.some((student) =>
         student.status.toLowerCase().includes(searchTerm)
       )
-    )
-  })
+    );
+  });
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case 'present':
-        return 'default'
-      case 'absent':
-        return 'destructive'
-      case 'late':
-        return 'secondary'
+      case "present":
+        return "default";
+      case "absent":
+        return "destructive";
+      case "late":
+        return "secondary";
       default:
-        return 'outline'
+        return "outline";
     }
-  }
+  };
 
   return (
     <div className="p-6">
@@ -132,11 +135,20 @@ export default function AttendancePage() {
                       <div className="flex flex-col gap-1">
                         {record.students.map((student, index) => (
                           <div key={index} className="flex items-center gap-2">
-                            <span>{studentNameMap[student.student] || student.student}</span>
-                            <Badge variant={getStatusBadgeVariant(student.status)}>
+                            <span>
+                              {studentNameMap[student.student] ||
+                                student.student}
+                            </span>
+                            <Badge
+                              variant={getStatusBadgeVariant(student.status)}
+                            >
                               {student.status}
                             </Badge>
-                            {student.remarks && <span className="text-sm text-gray-500">({student.remarks})</span>}
+                            {student.remarks && (
+                              <span className="text-sm text-gray-500">
+                                ({student.remarks})
+                              </span>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -156,5 +168,5 @@ export default function AttendancePage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
