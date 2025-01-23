@@ -13,8 +13,6 @@ import { getAllAssignments } from "@/lib/database/actions/assignmentActions";
 import { getAllTests } from "@/lib/database/actions/testAction";
 import { Progress } from "@/components/ui/progress";
 import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 interface IAssignment {
   _id: string;
