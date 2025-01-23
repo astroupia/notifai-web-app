@@ -13,6 +13,8 @@ import { getAllAssignments } from "@/lib/database/actions/assignmentActions";
 import { getAllTests } from "@/lib/database/actions/testAction";
 import { Progress } from "@/components/ui/progress";
 import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface IAssignment {
   _id: string;
@@ -62,7 +64,7 @@ export default function StudentDashboard() {
     };
 
     fetchData();
-  });
+  }, []);
 
   // Calculate test statistics
   const totalTests = tests.length;
@@ -100,7 +102,9 @@ export default function StudentDashboard() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Student Dashboard</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold mb-6">Student Dashboard</h1>
+      </div>
 
       <div className="grid grid-cols-1 gap-6">
         {/* Academic Progress Card */}
