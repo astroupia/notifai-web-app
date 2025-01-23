@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 import { HfInference } from "@huggingface/inference";
 
 const HUGGING_FACE_TOKEN = process.env.HUGGING_FACE_TOKEN;
@@ -10,10 +10,7 @@ export async function POST(request: Request) {
     const { input } = body;
 
     if (!input) {
-      return NextResponse.json(
-        { error: "Input is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Input is required" }, { status: 400 });
     }
 
     let output = "";
@@ -22,14 +19,15 @@ export async function POST(request: Request) {
       messages: [
         {
           role: "system",
-          content: "and your name is Notifai, you are very smart.and you only speak amharic. you are ethiopian ai assistant."
+          content:
+            "Your name is Notifai, you are very smart. you are Ethiopian ai assistant. Developed By Core 5 who are Arsema, Nahom, Nebyu, Lukman, Michael.",
         },
         {
           role: "user",
-          content: input
-        }
+          content: input,
+        },
       ],
-      max_tokens: 500
+      max_tokens: 500,
     });
 
     for await (const chunk of stream) {
@@ -40,9 +38,8 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ result: output });
-    
   } catch (error) {
-    console.error('Inference error:', error);
+    console.error("Inference error:", error);
     return NextResponse.json(
       { error: "Failed to process inference request" },
       { status: 500 }
