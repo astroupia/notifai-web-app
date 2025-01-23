@@ -4,7 +4,7 @@ export default function Home() {
       <div className="max-w-4xl mx-auto pt-20 px-4">
         <main className="flex flex-col items-center text-center gap-8">
           <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
-            Welcome to NotifAI
+            ስላም NotifAI &apos; አስታዋሽ ኤአይ &apos; ነኝ
           </h1>
 
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl">
@@ -57,7 +57,9 @@ export default function Home() {
         </main>
 
         <footer className="mt-20 mb-8 text-center text-gray-600 dark:text-gray-400">
-          <p>© 2024 NotifAI. All rights reserved.</p>
+          <p>
+            © 2024 NotifAI. Introduction to AI Assignment, All rights reserved.
+          </p>
         </footer>
       </div>
     </div>
